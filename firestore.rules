@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Regra padrão: apenas usuários autenticados podem ler e escrever.
+    // Regras mais específicas por coleção serão adicionadas abaixo.
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Coleção de usuários: cada usuário só pode ver seus próprios dados.
+    match /users/{userId} {
+      allow read, update: if request.auth.uid == userId;
+    }
+
+    // Coleções com regras mais granulares (a serem implementadas)
+    // match /reservations/{reservationId} { ... }
+    // match /camarins/{camarimId} { ... }
+    // match /guests/{guestId} { ... }
+  }
+}
